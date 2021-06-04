@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>簡単ご融資チャットボット</title>
+<script src="js/jquery-2.1.3.min.js"></script>
+
+<link rel="stylesheet" href="css/sample11.css">
+</head>
+
+<body>
+
+<!-- コンテンツ表示画面 -->
+<div class="header">
+<div><img src="img/logo.png" alt=""> </div>
+<ul class="header-menu">
+  <li>新規登録</li>
+  <li>会員ページ</li>
+  <li>各種設定</li>
+
+</ul>
+
+</div>
+
+<div id="currency"></div>
+<div class="page-title">簡単ご融資・返済申請ページ</div>
+<div class="wrapper">
+  <div class="name-container" id="name-container">
+    <div>ウシジマくんファイナンスに<br> お越しいただき有難うございます。<br> まずは名前をご入力ください。</div>
+    <div><input type="text" id="username"></div>
+    <div> <button id="send0">送信</button></div>
+  </div>
+  <div><a id="output00"></a><a id="output0"></a><a id="output000"></a></div>
+  
+
+  <div class="text-container1" >
+    <div id="purpose-text">今回の要件をお選びください。</div>
+    <div><form name="form1" class="purpose1">
+      <select name="purpose1" id="purpose1" >
+      <option value="融資希望">融資希望</option>
+      <option value="返済希望">返済希望</option>
+    </select>
+  </form></div>
+    <div> <input type="button" value="送信" id="send1" onclick="clickBtn1()"/></div>
+  </div>
+
+  <div><a id="output1"></a><a id="output11"></a> </div>
+
+  <div class="text-container2" id="tc2">
+    <div id="purpose2">ご融資希望金額を教えてください</div>
+    <div><textarea id="text2" rows="1" placeholder="万単位※半角数字のみ"></textarea></div>
+    <div> <button id="send2">送信</button></div>
+  </div>
+  <div><a id="output2"></a> <a class="digit">万円のご融資を希望ですね。<br> 承知しました。</a></div>
+
+  <div class="text-container3">
+    <div id="purpose3">ご融資用途を教えてください</div>
+    <div><textarea id="text3" rows="1" type="number"></textarea></div>
+    <div> <button id="send3">送信</button></div>
+  </div>
+  <div><a id="output33"></a> <a id="output3"></a><a id="output333"></a></div>
+  <div id="output4"> </div>  
+<div class="cstatus">
+  <div><a id="name5"></a> <a class="mr5">様</a></div>
+  <div><a class="digit5">今回の融資金額　</a><a id="debt5"></a> <a class="digit5">万円(金利10%/10日間)</a></div>
+  <!-- <div><a id="euro5"></a><a class="digit5">ユーロ</a></div> -->
+  <div><a class="pur5">使用用途　</a><a id="pur5"></a> </div>
+ 
+<div id="output5"> </div>
+
+</div>
+
+
+
+  <div class="confirmation4">
+    <div>上記の融資希望でよろしいでしょうか?</div>
+    <form name="form4" class="purpose4">
+      <select name="confirmation4" id="confirmation4" >
+        <option value="yes">上記に相違はございません。</option>
+        <option value="no">もう一度最初からやり直す</option>
+      </select>
+    </form> 
+    <div><input type="button" value="最終確認" id="send4" onclick="clickBtn4()"/></div>
+  </div>
+</div>
+
+<div class="return7">
+  <div>お次は何を希望されますか？</div>
+  <ul>
+    <li><a id="ssss" href="javascript:OnLinkClick();">追加融資希望</a> </li>
+    <li> <a href="javascript:OnLinkClick();">返済希望</a></li>
+    <li> <a href="https://www.asoview.com/">週末の遊びを探してみる</a></li>
+   
+  </ul>
+  
+    
+
+</div>
+<div class="cstatuss">
+  <div><a>現在の借入状況<br>合計融資金額　</a><a id="debt55"></a> <a>万円(金利10%/10日間)</a></div>
+  <div><a id="euro55"></a><a>ユーロ</a></div>
+  <div><a>使用用途　</a><a id="pur55"></a> </div>
+ 
+<div id="output5"> </div>
+<!-- <canvas id="canvas" width="1000" height="1000"></canvas> -->
+
+
+<!-- <script>
+ 
+</script> -->
+
+
+
+
+<!--/ コンテンツ表示画面 -->
+<!-- 以下JavaScript領域 -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+
+<!-- 以下Firebase -->
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.5.0/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+     <script src="https://www.gstatic.com/firebasejs/8.5.0/firebase-database.js"></script>
+
+<script>
+  // set endpoint and your access key
+endpoint = 'latest'
+access_key = '02cf04a293e96bb3c4ad91e000989367';//
+
+// get the most recent exchange rates via the "latest" endpoint:
+
+
+
+
+var firebaseConfig = {
+    apiKey: "AIzaSyBoyjdHrnIRLlxiBuA9r3oP1dwjYXcbfDU",
+    authDomain: "gschat-a1866.firebaseapp.com",
+    projectId: "gschat-a1866",
+    storageBucket: "gschat-a1866.appspot.com",
+    messagingSenderId: "180024880349",
+    appId: "1:180024880349:web:5334c58762d7f30c70bf34"
+
+    
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  let newPostRef = firebase.database().ref();
+
+  $("#send0").on("click", function () {
+    let username = $("#username").val();
+    newPostRef.push({
+          username: username
+          
+      });
+      let newPostRefLast = newPostRef.orderByChild("dateAdded").limitToLast(1);
+
+  $(".name-container").css('display','none');
+  $(".text-container1").css('display','block');
+  
+   //表示
+   newPostRefLast.on("child_added", function(data0){
+    const t0 = data0.val();
+    const l0 = data0.key;
+    var str0 = t0.username;
+    var str00 = "";
+    if(str0){
+      str00 = str0;
+    }
+    // console.log(str00);
+
+    $("#output0").append(str00);
+    $("#output00").html("ようこそ。　");
+    $("#output000").html("様");
+    
+    })
+    
+})
+
+function clickBtn1(){
+
+// 値(数値)を取得
+const num1 = purpose1.selectedIndex;
+//const num = document.form1.color1.selectedIndex;
+
+// 値(数値)から値(value値)を取得
+const reason = purpose1.options[num1].value;
+
+
+
+
+newPostRef.push({
+          option1:num1,
+          pur:reason
+          
+
+      });
+      $(".text-container1").css('display','none');
+      $(".text-container2").css('display','block');
+
+      //表示
+    newPostRef.on("child_added", function(data){
+    const v = data.val();
+    const k = data.key;
+    const str = v.pur
+    $("#output1").html(str);
+    $("#output11").html("ですね");
+
+    })
+
+}
+
+//希望金額入力
+
+  let initial = Number("");
+  console.log(initial);
+
+$("#send2").on("click", function (){
+
+    let text2 = $("#text2").val();
+  
+  let newPostRefLast = newPostRef.orderByChild("dateAdded").limitToLast(1);
+  let debt2 = Number(text2);
+  
+  let updatedMoney =()=>{
+tinitial = debt2 + initial;
+return tinitial;
+  }
+
+  initial = updatedMoney();
+
+
+ 
+  
+  
+  
+
+  
+  
+
+  // console.log(initial);
+  // for (var i = 0; i < 3; i++) {
+  //   sum = sum + i;
+  //   return sum;}
+
+
+ newPostRef.push({
+          text2:debt2,
+        initial:Number(initial),
+      euro:Math.floor(10000*Number(initial)/Number(rrate))});
+  $(".text-container2").css('display','none');
+  $(".text-container3").css('display','block');
+  $(".digit").css('display','inline');
+   //表示
+   newPostRefLast.on("child_added", function (data){
+    const t = data.val();
+    const l = data.key;
+    let t2 = t.text2;
+    let t222 = t.initial;
+    // var t22 = "";
+    // var t222 = newPostRef.map(t22);
+    // console.log(t222);
+
+
+// for( i=1 ; i<=10 ; ++i )
+// {
+// 	t22 =. +t2+;
+// }
+// console.log(t22);
+
+  //   (t2){
+  //     var t22 = [t2];
+  //   }
+ 
+  // }
+    
+    
+    
+
+
+
+    const str2 = t.text2;
+    $("#output2").html(str2);
+
+
+    })
+    // tt2 = aa();
+    // console.log(tt2);
+}
+
+
+)
+
+
+
+//融資目的入力
+$("#send3").on("click", function () {
+  let newPostRefLast2 = newPostRef.orderByChild("dateAdded2").limitToLast(1);
+let text3 = $("#text3").val();
+newPostRef.push({
+          text3:text3});
+  $(".text-container3").css('display','none');
+  $(".confirmation4").css('display','block');
+
+   //表示
+     newPostRef.on("child_added", function(data){
+      const t3 = data.val();
+      const l3 = data.key;
+      const str3 = t3.text3;
+      var totall = Number(t3.initial);
+      
+      
+      var ratet = Number(t3.rate);
+      // var euro = Number(totall*ratet);
+      // console.log(euro);
+      
+      $("#output3").html(str3);
+      $("#output33").html("ご融資目的は");
+      $("#output333").html("ですね");
+      $("#output33").css('display','block');
+  $("#output333").css('display','block');
+
+       
+  
+    // console.log(t3);
+
+      $(".cstatus").css('display','block');
+      $("#name5").html(t3.username);
+      $("#debt5").html(t3.text2);
+     
+      $("#pur5").html(t3.text3);
+    
+      
+
+}
+)
+
+
+      
+      })
+
+
+
+
+//確認画面
+function clickBtn4(){
+
+// 値(数値)を取得
+const num4 = confirmation4.selectedIndex;
+//const num = document.form1.color1.selectedIndex;
+
+// 値(数値)から値(value値)を取得
+let conclusion = confirmation4.options[num4].value;
+let date1 = new Date();
+let date2 = (date1.getMonth() + 2);
+let date3 = date1.getDate();
+
+
+
+        
+
+newPostRef.push({
+          option4:num4,
+          deadlinemonth:date2,
+          deadlinedate:date3,
+          conf4:conclusion
+
+
+      });
+if(conclusion ==="yes"){
+  $("#output4").html("融資が確定しました");
+  $("#output5").html(`返済期限:${date2}月 ${date3}日`);
+ 
+  $(".confirmation4").css('display','none');
+  $(".return7").css('display','block')
+}else{
+  newPostRef.remove();
+  window.location.reload();
+}
+
+
+  }
+
+  function aaa(){
+return $.ajax({
+    url: 'http://api.exchangeratesapi.io/v1/' + endpoint + '?access_key=' + access_key,
+    dataType: 'jsonp',
+    // async: false,
+    cache : false,
+  })}
+
+    aa = aaa().done(function (json) {
+      
+      rrate = Math.floor(json.rates.JPY);
+      euroo = rrate
+      newPostRef.push({
+          rate:euroo});
+
+      newPostRef.on("child_added", function(data){
+      const t3 = data.val();
+      const l3 = data.key;
+      const ttotal = t3.initial;
+      $("#debt55").html(t3.initial);
+      $("#euro55").html(t3.euro);
+      $("#pur55").html(t3.text3);
+      // console.log($("#debt55").html(t3.initial));
+      
+    })
+     
+      });
+ 
+
+
+
+  
+
+
+</script>
+
+<script language="javascript" type="text/javascript">
+  function OnLinkClick() {
+    $(".text-container2").css('display','block');
+    $(".return7").css('display','none');
+    $(".cstatus").css('display','none');
+    $(".text-container1").css('display','none');
+    $(".text-container3").css('display','none');
+  $(".digit").css('display','none');
+  $("#output4").css('display','none');
+  $("#output33").css('display','none');
+  $("#output333").css('display','none');
+  $("#output3").html("");
+  $("#output2").html("");
+  // initial = $("#debt55").val();
+  // console.log(initial);
+  
+
+ 
+
+
+  }
+
+ 
+  
+  // reloadの基本的な使い方
+// reloadメソッドによりページをリロード
+//  window.location.reload(
+//   newPostRef.on("child_added", function(data){
+//       const t3 = data.val();
+//       initial = t3.initial ;
+//       console.log(data)
+//   })
+
+ 
+ 
+      
+//  )
+
+
+
+
+  
+ 
+</script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
